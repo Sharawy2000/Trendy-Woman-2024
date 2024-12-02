@@ -12,17 +12,11 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $table = 'users';
+    public $timestamps = true;
+    protected $fillable = array('name', 'phone', 'email', 'is_blocked', 'is_active', 'image', 'deleted_at');
 
+    
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -32,7 +26,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
+    
     /**
      * Get the attributes that should be cast.
      *
@@ -44,5 +38,39 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function notifications()
+    {
+        return $this->hasMany('App\Models\Notification');
+    }
+    
+    public function chats()
+    {
+        return $this->hasMany('App\Models\Chat');
+    }
+    
+    public function messages()
+    {
+        return $this->morphMany('App\Models\Message', 'sender');
+    }
+    
+    public function otps()
+    {
+        return $this->morphMany('App\Models\OTP', 'modelable');
+    }
+    
+    public function subscription()
+    {
+        return $this->hasOne('App\Models\Subscription');
+    }
+    
+    public function complaintSuggesstions()
+    {
+        return $this->hasMany('App\Models\ComplaintSuggestion');
+    }
+    
+    public function orders()
+    {
+        return $this->hasMany('App\Models\Order');
     }
 }
